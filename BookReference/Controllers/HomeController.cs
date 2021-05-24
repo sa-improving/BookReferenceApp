@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BookReference.Models;
 using BookReference.ViewModels.Home;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace BookReference.Controllers
@@ -14,18 +15,22 @@ namespace BookReference.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         private List<Book> AllBookData()
         {
             var books = new List<Book>();
 
-            //NOTE: DO NOT EVER HARDCODE YOUR CONNECTION STRING IN CODE LIKE THIS
-            using (var conn = new SqlConnection("Server=.;Database=Books;Trusted_Connection=True;"))
+            var conString = _configuration.GetConnectionString("default");
+
+
+            using (var conn = new SqlConnection(conString))
             {
                 conn.Open();
 
