@@ -16,57 +16,38 @@ namespace BookReference.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _configuration;
+        private readonly BookData _bookData;
 
-        public HomeController(ILogger<HomeController> logger, IConfiguration configuration)
+        public HomeController(ILogger<HomeController> logger, IConfiguration configuration, BookData bookData)
         {
             _logger = logger;
             _configuration = configuration;
+            _bookData = bookData;
         }
 
-        private List<Book> AllBookData()
-        {
-            var books = new List<Book>();
-
-            var conString = _configuration.GetConnectionString("default");
-
-
-            using (var conn = new SqlConnection(conString))
-            {
-                conn.Open();
-
-                var cmd = new SqlCommand();
-                cmd.Connection = conn;
-                cmd.CommandType = System.Data.CommandType.Text;
-                cmd.CommandText = "SELECT * FROM Books";
-
-                var reader = cmd.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    var title = reader["Title"].ToString();
-                    var id = Convert.ToInt32(reader["BookId"]);
-
-                    books.Add(new Book
-                    {
-                        Title = title,
-                        Id = id
-                    });
-                }
-            }
-
-            return books;
-        }
+        
 
         public IActionResult Index()
         {
-        var books = AllBookData();
+        var books = _bookData.AllBookData();
 
         var vm = new HomeViewModel();
         vm.Message = "Look at these wonderful books!";
         vm.Books = books;
 
         return View(vm);
-    }
+        }
+
+        public IActionResult BooksWithAjax()
+        {
+            return View();
+        }
+
+        public IActionResult BookData() 
+        {
+            var books = _bookData.AllBookData();
+            return Json(books);
+        }
 
         public IActionResult Privacy()
         {
