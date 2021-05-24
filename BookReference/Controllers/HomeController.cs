@@ -20,12 +20,12 @@ namespace BookReference.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        private List<Book> AllBookData()
         {
-            var Books = new List<Book>();
+            var books = new List<Book>();
 
-            //Note: DO NOT EVER HARDCODE CONNECTION LIKE THIS vvvv
-            using (var conn = new SqlConnection("Server = .; Database = Books; Trusted_Connection = True;"))
+            //NOTE: DO NOT EVER HARDCODE YOUR CONNECTION STRING IN CODE LIKE THIS
+            using (var conn = new SqlConnection("Server=.;Database=Books;Trusted_Connection=True;"))
             {
                 conn.Open();
 
@@ -41,24 +41,27 @@ namespace BookReference.Controllers
                     var title = reader["Title"].ToString();
                     var id = Convert.ToInt32(reader["BookId"]);
 
-                    //create my book here
-                    Books.Add(new Book
+                    books.Add(new Book
                     {
                         Title = title,
                         Id = id
-                    }
-                    );
-
+                    });
                 }
-
             }
 
-            var vm = new HomeViewModel();
-            vm.Message = "Look at these wonderful books!";
-            vm.Books = Books;
-
-            return View(vm);
+            return books;
         }
+
+        public IActionResult Index()
+        {
+        var books = AllBookData();
+
+        var vm = new HomeViewModel();
+        vm.Message = "Look at these wonderful books!";
+        vm.Books = books;
+
+        return View(vm);
+    }
 
         public IActionResult Privacy()
         {
