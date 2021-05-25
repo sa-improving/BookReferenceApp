@@ -49,6 +49,11 @@ namespace BookReference.Controllers
             return Json(books);
         }
 
+        public IActionResult Book(int? id) 
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
