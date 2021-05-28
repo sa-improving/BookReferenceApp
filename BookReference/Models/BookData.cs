@@ -91,14 +91,8 @@ namespace BookReference.Models
                 var cmd = new SqlCommand();
 
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = "INSERT INTO Books {Title} VALUES {@title}";
-                cmd.Parameters.Add(new SqlParameter 
-                    { 
-                        ParameterName = "@title",
-                        Value = book.Title, 
-                        SqlDbType = SqlDbType.NVarChar 
-                    });
-
+                cmd.CommandText = "INSERT INTO Books (Title) VALUES (@title)";
+                cmd.Parameters.Add(new SqlParameter { ParameterName = "@title", Value = book.Title, SqlDbType = SqlDbType.NVarChar });
                 cmd.Connection = conn;
                 cmd.ExecuteNonQuery();
             }
