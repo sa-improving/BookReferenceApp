@@ -7,8 +7,10 @@
     <h1 class="display-4">Here's some books</h1>
     <p>@Model.Message</p>
 
+    <p><a href="/home/newBook">Add Book</a></p>
+
     @foreach(var book in Model.Books)
         {
-            <p>@book.Title (@book.Id)</p>
+            <p><a href="/home/book/@book.Id">@book.Title</a></p>
          }
 </div>

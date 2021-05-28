@@ -51,7 +51,23 @@ namespace BookReference.Controllers
 
         public IActionResult Book(int? id) 
         {
+            var vm = new SingleBookDataViewModel { Book = _bookData.GetSingleBook(id.Value) };
+
+            return View(vm);
+        }
+
+        [HttpGet]
+        public IActionResult NewBook() 
+        {
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult NewBook(Book book)
+        {   //SAVE
+            _bookData.CreateNewBook(book);
+            
+            return RedirectToAction("Index");
         }
 
         public IActionResult Privacy()

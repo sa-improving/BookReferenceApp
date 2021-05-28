@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,6 +48,60 @@ namespace BookReference.Models
             }
 
             return books;
+        }
+
+        public Book GetSingleBook(int id)
+        {
+            var connString = _configuration.GetConnectionString("default");
+            using (var conn = new SqlConnection(connString))
+            {
+                conn.Open();
+
+                var cmd = new SqlCommand();
+
+                cmd.Connection = conn;
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.Add(new SqlParameter { ParameterName = "@bookId", Value = id, SqlDbType = SqlDbType.Int });
+                cmd.CommandText = "SELECT * FROM Books WHERE BookId = @bookId";
+
+                var reader = cmd.ExecuteReader();
+
+                if(reader.Read())
+                {
+                    var title = reader["Title"].ToString();
+                    var bookId = Convert.ToInt32(reader["BookId"]);
+
+                    return new Book
+                    {
+                        Title = title,
+                        Id = id
+                    };
+                }
+            }
+            return null;
+        }
+
+        public void CreateNewBook(Book book)
+        {
+            var connString = _configuration.GetConnectionString("default");
+            using (var conn = new SqlConnection(connString))
+            {
+                conn.Open();
+
+                var cmd = new SqlCommand();
+
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "INSERT INTO Books {Title} VALUES {@title}";
+                cmd.Parameters.Add(new SqlParameter 
+                    { 
+                        ParameterName = "@title",
+                        Value = book.Title, 
+                        SqlDbType = SqlDbType.NVarChar 
+                    });
+
+                cmd.Connection = conn;
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }
